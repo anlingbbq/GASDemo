@@ -33,6 +33,7 @@ void AGDCharacter::PossessedBy(AController* NewController)
 		}
 		
 		InitializeAttributes();
+		AddStartupEffects();
 	}
 }
 

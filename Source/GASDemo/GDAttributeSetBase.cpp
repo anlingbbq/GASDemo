@@ -4,6 +4,9 @@
 #include "GDAttributeSetBase.h"
 
 #include "Net/UnrealNetwork.h"
+#include "GameplayEffect.h"
+#include "GameplayEffectExtension.h"
+#include "GDCharacter.h"
 
 UGDAttributeSetBase::UGDAttributeSetBase()
 {
@@ -12,10 +15,50 @@ UGDAttributeSetBase::UGDAttributeSetBase()
 void UGDAttributeSetBase::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
 	Super::PreAttributeChange(Attribute, NewValue);
+
+	// If a Max value changes, adjust current to keep Current % of Current to Max
+	if (Attribute == GetHealthAttribute()) // GetMaxHealthAttribute comes from the Macros defined at the top of the header
+	{
+		NewValue = FMath::Clamp<float>(NewValue, 0, GetMaxHealth());
+	}
+	else if (Attribute == GetStaminaAttribute())
+	{
+		NewValue = FMath::Clamp<float>(NewValue, 0, GetMaxStamina());
+	}
 }
 
 void UGDAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
+	FGameplayEffectContextHandle Context = Data.EffectSpec.GetContext();
+	AGDCharacter* TargetCharacter = nullptr;
+	if (Data.Target.AbilityActorInfo.IsValid() && Data.Target.AbilityActorInfo->AvatarActor.IsValid())
+	{
+		TargetCharacter = Cast<AGDCharacter>(Data.Target.AbilityActorInfo->AvatarActor.Get());
+	}
+	
+	if (Data.EvaluatedData.Attribute == GetDamageAttribute())
+	{
+		const float LocalDamageDone = GetDamage();
+		SetDamage(0.0f);
+
+		if (TargetCharacter && LocalDamageDone > 0.0f)
+		{
+			if (TargetCharacter->GetHealth() > 0.0f)
+			{
+				const float NewHealth = GetHealth() - LocalDamageDone;
+				SetHealth(FMath::Clamp(NewHealth, 0.0f, GetMaxHealth()));
+
+				// TODO 计算攻击方向
+				const FHitResult* Hit = Data.EffectSpec.GetContext().GetHitResult();
+
+				// TODO 处理死亡
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("%s() %s is NOT alive when receiving damage"), TEXT(__FUNCTION__), *TargetCharacter->GetName());
+			}
+		}
+	}
 }
 
 void UGDAttributeSetBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
