@@ -15,16 +15,6 @@ UGDAttributeSetBase::UGDAttributeSetBase()
 void UGDAttributeSetBase::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
 	Super::PreAttributeChange(Attribute, NewValue);
-
-	// If a Max value changes, adjust current to keep Current % of Current to Max
-	if (Attribute == GetHealthAttribute()) // GetMaxHealthAttribute comes from the Macros defined at the top of the header
-	{
-		NewValue = FMath::Clamp<float>(NewValue, 0, GetMaxHealth());
-	}
-	else if (Attribute == GetStaminaAttribute())
-	{
-		NewValue = FMath::Clamp<float>(NewValue, 0, GetMaxStamina());
-	}
 }
 
 void UGDAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
@@ -58,6 +48,14 @@ void UGDAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCall
 				UE_LOG(LogTemp, Warning, TEXT("%s() %s is NOT alive when receiving damage"), TEXT(__FUNCTION__), *TargetCharacter->GetName());
 			}
 		}
+	}
+	else if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+	{
+		SetHealth(FMath::Clamp<float>(GetHealth(), 0, GetMaxHealth()));
+	}
+	else if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
+	{
+		SetStamina(FMath::Clamp<float>(GetStamina(), 0, GetMaxStamina()));
 	}
 }
 
