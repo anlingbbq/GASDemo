@@ -6,3 +6,10 @@
 UGDGameplayAbility::UGDGameplayAbility()
 {
 }
+
+void UGDGameplayAbility::OnAvatarSet(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
+{
+	Super::OnAvatarSet(ActorInfo, Spec);
+
+	BeginPlay();
+}

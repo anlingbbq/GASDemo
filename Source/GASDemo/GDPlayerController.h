@@ -17,4 +17,7 @@ class GASDEMO_API AGDPlayerController : public APlayerController
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void CreateHUD();
+
+	virtual void OnPossess(APawn* InPawn) override;
+	virtual void OnRep_PlayerState() override;
 };

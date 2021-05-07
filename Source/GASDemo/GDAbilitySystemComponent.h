@@ -13,5 +13,10 @@ UCLASS()
 class GASDEMO_API UGDAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
-	
+
+public:
+	UFUNCTION(BlueprintCallable)
+		TArray<UGameplayAbility*> GetAbilityInstances(FGameplayAbilitySpecHandle Handle);
+	UFUNCTION(BlueprintCallable)
+		UGameplayAbility* GetSingleAbilityInstance(FGameplayAbilitySpecHandle Handle);
 };

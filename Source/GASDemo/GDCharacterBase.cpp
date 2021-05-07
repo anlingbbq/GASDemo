@@ -56,8 +56,8 @@ void AGDCharacterBase::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 {
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	//PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AGDCharacterBase::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AGDCharacterBase::MoveRight);
@@ -119,6 +119,8 @@ void AGDCharacterBase::LookUpAtRate(float Rate)
 
 void AGDCharacterBase::MoveForward(float Value)
 {
+	LastForwardInput = Value;
+	
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
 		// find out which way is forward
@@ -133,6 +135,8 @@ void AGDCharacterBase::MoveForward(float Value)
 
 void AGDCharacterBase::MoveRight(float Value)
 {
+	LastRightInput = Value;
+	
 	if ( (Controller != nullptr) && (Value != 0.0f) )
 	{
 		// find out which way is right

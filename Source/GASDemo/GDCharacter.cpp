@@ -13,9 +13,56 @@ AGDCharacter::AGDCharacter(const FObjectInitializer& ObjectInitializer)
 	PrimaryActorTick.bCanEverTick = false;
 }
 
+// Server Only
 void AGDCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+
+	UE_LOG(LogTemp, Warning, TEXT("Character PossessdBy %s"), GetLocalRole() == ROLE_Authority ? *FString("Server") : *FString("Client"))
+	
+	AGDPlayerState* PS = GetPlayerState<AGDPlayerState>();
+	if (PS)
+	{
+		AbilitySystemComponent = Cast<UGDAbilitySystemComponent>(PS->GetAbilitySystemComponent());
+
+		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
+
+		AttributeSetBase = PS->GetAttributeSetBase();
+		
+		AGDPlayerController* PC = Cast<AGDPlayerController>(GetController());
+		if (PC && PC->IsLocalPlayerController())
+		{
+			PC->CreateHUD();
+		}
+
+		if (!IsPlayerStateReady)
+		{
+			IsPlayerStateReady = true;
+			PlayerStateReady();
+		}
+		
+		// UI的属性修改事件的绑定和属性初始化的顺序有问题？ 临时处理
+		FTimerHandle TempHandle;
+		GetWorldTimerManager().SetTimer(TempHandle, [this]()
+		{
+			InitializeAttributes();
+			AddStartupEffects();
+			AddCharacterAbilities();
+
+			if (!IsLocallyControlled())
+			{
+				InitializeFloatBar(GetHealth(), GetMaxHealth(), GetAbilitySystemComponent());
+			}
+		}, 0.5f, false);
+	}
+}
+
+// Client Only
+void AGDCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	UE_LOG(LogTemp, Warning, TEXT("Character OnRep_PlayerState %s"), GetLocalRole() == ROLE_Authority ? *FString("Server") : *FString("Client"))
 
 	AGDPlayerState* PS = GetPlayerState<AGDPlayerState>();
 	if (PS)
@@ -27,13 +74,32 @@ void AGDCharacter::PossessedBy(AController* NewController)
 		AttributeSetBase = PS->GetAttributeSetBase();
 
 		AGDPlayerController* PC = Cast<AGDPlayerController>(GetController());
-		if (PC)
+		if (PC && PC->IsLocalPlayerController())
 		{
 			PC->CreateHUD();
 		}
+
+		if (!IsPlayerStateReady)
+		{
+			IsPlayerStateReady = true;
+			PlayerStateReady();
+		}
 		
-		InitializeAttributes();
-		AddStartupEffects();
+		// UI的属性修改事件的绑定和属性初始化的顺序有问题？ 临时处理
+		FTimerHandle TempHandle;
+		GetWorldTimerManager().SetTimer(TempHandle, [this]()
+		{
+			InitializeAttributes();
+			AddStartupEffects();
+			AddCharacterAbilities();
+			AttributeSetBase->SetHealth(GetMaxHealth());
+			AttributeSetBase->SetStamina(GetMaxStamina());
+
+			if (!IsLocallyControlled())
+			{
+				InitializeFloatBar(GetHealth(), GetMaxHealth(), GetAbilitySystemComponent());
+			}
+		}, 0.5f, false);
 	}
 }
 
@@ -97,6 +163,14 @@ float AGDCharacter::GetMoveSpeed() const
 	return 0.0f;
 }
 
+UGameplayAbility* AGDCharacter::GetAbilityInstanceByIndex(int32 Index)
+{
+	if (Index < AbilityHandles.Num())
+		return AbilitySystemComponent->GetSingleAbilityInstance(AbilityHandles[Index]);
+
+	return nullptr;
+}
+
 void AGDCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -155,7 +229,7 @@ void AGDCharacter::AddCharacterAbilities()
 
 	for (TSubclassOf<UGDGameplayAbility>& StartupAbility : CharacterAbilities)
 	{
-		AbilitySystemComponent->GiveAbility(
-			FGameplayAbilitySpec(StartupAbility, 1, static_cast<int32>(StartupAbility.GetDefaultObject()->AbilityInputID), this));
+		AbilityHandles.Add(AbilitySystemComponent->GiveAbility(
+			FGameplayAbilitySpec(StartupAbility, 1, INDEX_NONE, this)));
 	}
 }

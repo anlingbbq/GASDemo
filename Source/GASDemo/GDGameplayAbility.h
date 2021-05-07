@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GASDemo.h"
 #include "Abilities/GameplayAbility.h"
 #include "GDGameplayAbility.generated.h"
 
@@ -18,6 +17,8 @@ class GASDEMO_API UGDGameplayAbility : public UGameplayAbility
 public:
 	UGDGameplayAbility();
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Ability")
-		EGDAbilityInputID AbilityInputID = EGDAbilityInputID::None;
+	UFUNCTION(BlueprintImplementableEvent)
+		void BeginPlay();
+	
+	void OnAvatarSet(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 };
