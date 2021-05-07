@@ -29,3 +29,23 @@ UGameplayAbility* UGDAbilitySystemComponent::GetSingleAbilityInstance(FGameplayA
 
 	return nullptr;
 }
+
+void UGDAbilitySystemComponent::K2_CancelAbility(TSubclassOf<UGameplayAbility> Ability)
+{
+	CancelAbility(Ability.GetDefaultObject());
+}
+
+bool UGDAbilitySystemComponent::HasAnyTagInOwner(TArray<FGameplayTag> Tags) const
+{
+	static FGameplayTagContainer AbilitySystemComponentTags;
+	AbilitySystemComponentTags.Reset();
+	GetOwnedGameplayTags(AbilitySystemComponentTags);
+	
+	for (int i = 0; i < Tags.Num(); ++i)
+	{
+		if (AbilitySystemComponentTags.HasTag(Tags[i]))
+			return true;
+	}
+
+	return false;
+}

@@ -68,19 +68,11 @@ void UGDDamageExecCalculation::Execute_Implementation(const FGameplayEffectCusto
 
 	float UnmitigatedDamage = Damage; // Can multiply any damage boosters here
 
-	float MitigatedDamage = (UnmitigatedDamage) * (100 / (100 + Armor));
+	float MitigatedDamage = UnmitigatedDamage - Armor;
 
 	if (MitigatedDamage > 0.f)
 	{
 		// Set the Target's damage meta attribute
 		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().DamageProperty, EGameplayModOp::Additive, MitigatedDamage));
 	}
-
-	// Broadcast damages to Target ASC
-	//UGDAbilitySystemComponent* TargetASC = Cast<UGDAbilitySystemComponent>(TargetAbilitySystemComponent);
-	//if (TargetASC)
-	//{
-	//	UGDAbilitySystemComponent* SourceASC = Cast<UGDAbilitySystemComponent>(SourceAbilitySystemComponent);
-	//	TargetASC->ReceiveDamage(SourceASC, UnmitigatedDamage, MitigatedDamage);
-	//}
 }

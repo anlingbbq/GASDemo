@@ -19,4 +19,8 @@ public:
 		TArray<UGameplayAbility*> GetAbilityInstances(FGameplayAbilitySpecHandle Handle);
 	UFUNCTION(BlueprintCallable)
 		UGameplayAbility* GetSingleAbilityInstance(FGameplayAbilitySpecHandle Handle);
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "CancelAbility"))
+		void K2_CancelAbility(TSubclassOf<UGameplayAbility> Ability);
+	UFUNCTION(BlueprintCallable)
+		bool HasAnyTagInOwner(TArray<FGameplayTag> Tags) const;
 };
