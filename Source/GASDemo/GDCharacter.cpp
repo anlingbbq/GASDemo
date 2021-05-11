@@ -51,7 +51,7 @@ void AGDCharacter::PossessedBy(AController* NewController)
 
 			if (!IsLocallyControlled())
 			{
-				InitializeFloatBar(GetHealth(), GetMaxHealth(), GetAbilitySystemComponent());
+				InitializeFloatBar(GetAbilitySystemComponent());
 			}
 		}, 0.5f, false);
 	}
@@ -97,7 +97,7 @@ void AGDCharacter::OnRep_PlayerState()
 
 			if (!IsLocallyControlled())
 			{
-				InitializeFloatBar(GetHealth(), GetMaxHealth(), GetAbilitySystemComponent());
+				InitializeFloatBar(GetAbilitySystemComponent());
 			}
 		}, 0.5f, false);
 	}

@@ -60,7 +60,7 @@ protected:
 		TArray<TSubclassOf<class UGameplayEffect>> StartupEffects;
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void InitializeFloatBar(float CurValue, float MaxValue, UAbilitySystemComponent* ASC);
+		void InitializeFloatBar(UAbilitySystemComponent* ASC);
 	
 	void InitializeAttributes();
 	void AddStartupEffects();

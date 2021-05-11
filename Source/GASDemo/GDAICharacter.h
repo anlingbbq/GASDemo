@@ -18,8 +18,8 @@ public:
 	AGDAICharacter();
 
 	class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	
-	virtual void PossessedBy(AController* NewController) override;
+
+	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void PlayerStateReady();
@@ -64,7 +64,7 @@ protected:
 		TArray<TSubclassOf<class UGameplayEffect>> StartupEffects;
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void InitializeFloatBar(float CurValue, float MaxValue, UAbilitySystemComponent* ASC);
+		void InitializeFloatBar(UAbilitySystemComponent* ASC);
 
 	void InitializeAttributes();
 	void AddStartupEffects();

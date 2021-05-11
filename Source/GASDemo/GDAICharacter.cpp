@@ -37,16 +37,16 @@ UAbilitySystemComponent* AGDAICharacter::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
-void AGDAICharacter::PossessedBy(AController* NewController)
+void AGDAICharacter::BeginPlay()
 {
-	Super::PossessedBy(NewController);
-
-	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	Super::BeginPlay();
 	
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+
 	InitializeAttributes();
 	AddStartupEffects();
 	AddCharacterAbilities();
-	InitializeFloatBar(GetHealth(), GetMaxHealth(), AbilitySystemComponent);
+	InitializeFloatBar(AbilitySystemComponent);
 }
 
 int32 AGDAICharacter::GetCharacterLevel() const
@@ -123,7 +123,6 @@ void AGDAICharacter::InitializeAttributes()
 	{
 		return;
 	}
-
 
 	if (!DefaultAttributes)
 	{
