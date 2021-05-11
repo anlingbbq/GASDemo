@@ -47,6 +47,8 @@ public:
 		UGameplayAbility* GetAbilityInstanceByIndex(int32 Index);
 
 	UFUNCTION(BlueprintImplementableEvent)
+		void OnDead();
+	UFUNCTION(BlueprintImplementableEvent)
 		void OnRunOutOfStamine();
 	
 protected:

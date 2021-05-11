@@ -6,9 +6,9 @@
 #include "Net/UnrealNetwork.h"
 #include "GameplayEffect.h"
 #include "GameplayEffectExtension.h"
-#include "GameplayAbilitySpec.h"
 #include "GDAICharacter.h"
 #include "GDCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 UGDAttributeSetBase::UGDAttributeSetBase()
 {
@@ -40,10 +40,17 @@ void UGDAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCall
 				const float NewHealth = GetHealth() - LocalDamageDone;
 				SetHealth(FMath::Clamp(NewHealth, 0.0f, GetMaxHealth()));
 
-				// TODO 计算攻击方向
-				const FHitResult* Hit = Data.EffectSpec.GetContext().GetHitResult();
-
-				// TODO 处理死亡
+				// 没有消息分发器 临时做法
+				AGDAICharacter* AICharacter = Cast<AGDAICharacter>(TargetCharacter);
+				if (AICharacter)
+				{
+					AICharacter->OnDead();
+				}
+				else
+				{
+					AGDCharacter* PlayerCharacter = Cast<AGDCharacter>(TargetCharacter);
+					PlayerCharacter->OnDead();
+				}
 			}
 			else
 			{
@@ -73,6 +80,10 @@ void UGDAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCall
 				PlayerCharacter->OnRunOutOfStamine();
 			}
 		}
+	}
+	else if (Data.EvaluatedData.Attribute == GetMoveSpeedAttribute())
+	{
+		TargetCharacter->GetCharacterMovement()->MaxWalkSpeed = GetMoveSpeed();
 	}
 }
 
