@@ -6,6 +6,8 @@
 #include "Net/UnrealNetwork.h"
 #include "GameplayEffect.h"
 #include "GameplayEffectExtension.h"
+#include "GameplayAbilitySpec.h"
+#include "GDAICharacter.h"
 #include "GDCharacter.h"
 
 UGDAttributeSetBase::UGDAttributeSetBase()
@@ -20,10 +22,10 @@ void UGDAttributeSetBase::PreAttributeChange(const FGameplayAttribute& Attribute
 void UGDAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	FGameplayEffectContextHandle Context = Data.EffectSpec.GetContext();
-	AGDCharacter* TargetCharacter = nullptr;
+	ACharacter* TargetCharacter = nullptr;
 	if (Data.Target.AbilityActorInfo.IsValid() && Data.Target.AbilityActorInfo->AvatarActor.IsValid())
 	{
-		TargetCharacter = Cast<AGDCharacter>(Data.Target.AbilityActorInfo->AvatarActor.Get());
+		TargetCharacter = Cast<ACharacter>(Data.Target.AbilityActorInfo->AvatarActor.Get());
 	}
 	
 	if (Data.EvaluatedData.Attribute == GetDamageAttribute())
@@ -33,7 +35,7 @@ void UGDAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCall
 
 		if (TargetCharacter && LocalDamageDone > 0.0f)
 		{
-			if (TargetCharacter->GetHealth() > 0.0f)
+			if (GetHealth() > 0.0f)
 			{
 				const float NewHealth = GetHealth() - LocalDamageDone;
 				SetHealth(FMath::Clamp(NewHealth, 0.0f, GetMaxHealth()));
@@ -56,6 +58,21 @@ void UGDAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCall
 	else if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
 	{
 		SetStamina(FMath::Clamp<float>(GetStamina(), 0, GetMaxStamina()));
+
+		if (GetStamina() <= 0)
+		{
+			// 没有消息分发器 临时做法
+			AGDAICharacter* AICharacter = Cast<AGDAICharacter>(TargetCharacter);
+			if (AICharacter)
+			{
+				AICharacter->OnRunOutOfStamine();
+			}
+			else
+			{
+				AGDCharacter* PlayerCharacter = Cast<AGDCharacter>(TargetCharacter);
+				PlayerCharacter->OnRunOutOfStamine();
+			}
+		}
 	}
 }
 

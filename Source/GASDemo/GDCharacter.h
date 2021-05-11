@@ -46,6 +46,9 @@ public:
 	UFUNCTION(BlueprintPure)
 		UGameplayAbility* GetAbilityInstanceByIndex(int32 Index);
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void OnRunOutOfStamine();
+
 protected:
 	virtual void BeginPlay() override;
 

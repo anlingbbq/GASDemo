@@ -12,7 +12,7 @@ bool UGDMMCalculation::K2_GetCapturedAttributeMagnitude(const FGameplayEffectSpe
 	FAggregatorEvaluateParameters EvaluationParameters;
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
-	
+
 	return GetCapturedAttributeMagnitude(AttributeDefinition, Spec, EvaluationParameters, Attribute);
 }
 

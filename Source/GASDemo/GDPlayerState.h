@@ -5,7 +5,6 @@
 #include "AbilitySystemInterface.h"
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
-#include "GameplayEffectTypes.h"
 #include "GDPlayerState.generated.h"
 
 /**
@@ -57,19 +56,5 @@ protected:
 	UPROPERTY()
 		class UGDAttributeSetBase* AttributeSetBase;
 
-	FDelegateHandle HealthChangedDelegateHandle;
-	FDelegateHandle MaxHealthChangedDelegateHandle;
-	FDelegateHandle HealthRegenRateChangedDelegateHandle;
-	FDelegateHandle StaminaChangedDelegateHandle;
-	FDelegateHandle MaxStaminaChangedDelegateHandle;
-	FDelegateHandle StaminaRegenRateChangedDelegateHandle;
-
 	void BeginPlay() override;
-
-	/*virtual void HealthChanged(const FOnAttributeChangeData& Data);
-	virtual void MaxHealthChanged(const FOnAttributeChangeData& Data);
-	virtual void HealthRegenRateChanged(const FOnAttributeChangeData& Data);
-	virtual void StaminaChanged(const FOnAttributeChangeData& Data);
-	virtual void MaxStaminaChanged(const FOnAttributeChangeData& Data);
-	virtual void StaminaRegenRateChanged(const FOnAttributeChangeData& Data);*/
 };
