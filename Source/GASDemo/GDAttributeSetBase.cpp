@@ -40,16 +40,19 @@ void UGDAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCall
 				const float NewHealth = GetHealth() - LocalDamageDone;
 				SetHealth(FMath::Clamp(NewHealth, 0.0f, GetMaxHealth()));
 
-				// 没有消息分发器 临时做法
-				AGDAICharacter* AICharacter = Cast<AGDAICharacter>(TargetCharacter);
-				if (AICharacter)
+				if (GetHealth() <= 0)
 				{
-					AICharacter->OnDead();
-				}
-				else
-				{
-					AGDCharacter* PlayerCharacter = Cast<AGDCharacter>(TargetCharacter);
-					PlayerCharacter->OnDead();
+					// 没有消息分发器 临时做法
+					AGDAICharacter* AICharacter = Cast<AGDAICharacter>(TargetCharacter);
+					if (AICharacter)
+					{
+						AICharacter->OnDead();
+					}
+					else
+					{
+						AGDCharacter* PlayerCharacter = Cast<AGDCharacter>(TargetCharacter);
+						PlayerCharacter->OnDead();
+					}
 				}
 			}
 			else

@@ -39,14 +39,14 @@ UAbilitySystemComponent* AGDAICharacter::GetAbilitySystemComponent() const
 
 void AGDAICharacter::BeginPlay()
 {
-	Super::BeginPlay();
-	
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
 	InitializeAttributes();
 	AddStartupEffects();
 	AddCharacterAbilities();
 	InitializeFloatBar(AbilitySystemComponent);
+
+	Super::BeginPlay();
 }
 
 int32 AGDAICharacter::GetCharacterLevel() const
