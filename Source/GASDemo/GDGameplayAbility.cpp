@@ -13,3 +13,16 @@ void UGDGameplayAbility::OnAvatarSet(const FGameplayAbilityActorInfo* ActorInfo,
 
 	BeginPlay();
 }
+
+bool UGDGameplayAbility::CanActivateAbility(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags,
+	const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
+{
+	UNetDriver* NetDriver = ActorInfo->AvatarActor.Get()->GetWorld()->GetNetDriver();
+	if (bTestPredcition && NetDriver->IsServer())
+	{
+		return false;
+	}
+
+	return Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags);
+}
