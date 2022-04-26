@@ -26,3 +26,8 @@ bool UGDGameplayAbility::CanActivateAbility(const FGameplayAbilitySpecHandle Han
 
 	return Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags);
 }
+
+void UGDGameplayAbility::TestDebug()
+{
+	UE_LOG(LogTemp, Log, TEXT(">>>>>>>>>>>> Test"))
+}
