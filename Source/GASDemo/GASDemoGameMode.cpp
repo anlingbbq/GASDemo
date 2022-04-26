@@ -2,6 +2,7 @@
 
 #include "GASDemoGameMode.h"
 #include "UObject/ConstructorHelpers.h"
+#include "GameFramework/GameUserSettings.h"
 
 AGASDemoGameMode::AGASDemoGameMode()
 {
@@ -11,4 +12,16 @@ AGASDemoGameMode::AGASDemoGameMode()
 	//{
 	//	DefaultPawnClass = PlayerPawnBPClass.Class;
 	//}
+}
+
+void AGASDemoGameMode::BeginPlay()
+{
+	if (GEngine)
+	{
+		UGameUserSettings* MyGameSettins = GEngine->GetGameUserSettings();
+		MyGameSettins->SetScreenResolution(FIntPoint(640, 480));
+		MyGameSettins->SetFullscreenMode(EWindowMode::Windowed);
+		MyGameSettins->SetVSyncEnabled(false);
+		MyGameSettins->ApplySettings(false);
+	}
 }

@@ -13,6 +13,8 @@ class AGASDemoGameMode : public AGameModeBase
 
 public:
 	AGASDemoGameMode();
+
+	void BeginPlay() override;
 };
 
 
